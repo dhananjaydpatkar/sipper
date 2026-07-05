@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  sipper-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: sipper
+      POSTGRES_PASSWORD: sipperpassword
+      POSTGRES_DB: sipperdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - sipper-db-data:/var/lib/postgresql/data
+
+volumes:
+  sipper-db-data:
