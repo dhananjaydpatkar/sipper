@@ -7,7 +7,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import Profile from './pages/Profile';
 import './index.css';
 
-const ProtectedRoute = ({ children, requireAdmin }: { children: JSX.Element, requireAdmin?: boolean }) => {
+const ProtectedRoute = ({ children, requireAdmin }: { children: React.ReactElement, requireAdmin?: boolean }) => {
   const { user, loading } = useAuth();
   
   if (loading) return <div className="flex-center">Loading...</div>;
