@@ -12,6 +12,7 @@ const Login: React.FC = () => {
   const [confirmPin, setConfirmPin] = useState('');
   
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [showTerms, setShowTerms] = useState(false);
   
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -144,8 +145,38 @@ const Login: React.FC = () => {
               <span>Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); setAuthMode('login'); setError(''); }}>Log in</a></span>
             )}
           </div>
+          <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+            By continuing, you agree to our <a href="#" onClick={(e) => { e.preventDefault(); setShowTerms(true); }}>Terms of Use</a>
+          </div>
         </form>
       </div>
+
+      {showTerms && (
+        <div className="modal-overlay" onClick={() => setShowTerms(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowTerms(false)}>&times;</button>
+            <h3 style={{ marginBottom: '1rem', color: 'var(--primary-color)' }}>Terms of Use</h3>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', lineHeight: '1.6' }}>
+              <p style={{ marginBottom: '1rem' }}>
+                This platform is built by passion and runs on free tier infrastructure, made specifically for coffee lovers. Please use it responsibly and handle with care.
+              </p>
+              <p style={{ marginBottom: '1rem' }}>
+                <strong>Note on Performance:</strong> To save costs, the infrastructure goes to sleep after 60 seconds of inactivity. There can be cases where login takes a while (up to a minute) to wake the system up. Once login is through, the infrastructure is warmed up sufficiently to handle following requests smoothly.
+              </p>
+              <p>
+                If you have any suggestions or improvements, those will be subject to availability of time. Enjoy your coffee!
+              </p>
+            </div>
+            <button 
+              className="btn btn-primary" 
+              style={{ width: '100%', marginTop: '1.5rem' }}
+              onClick={() => setShowTerms(false)}
+            >
+              I Understand
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
