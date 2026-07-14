@@ -51,6 +51,7 @@ model Order {
 enum Slot {
   AM_10
   PM_3
+  NOW
 }
 
 enum OrderStatus {

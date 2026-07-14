@@ -70,7 +70,7 @@ const Dashboard: React.FC = () => {
     fetchOrders();
   }, []);
 
-  const handleOrderDaily = async (coffeeTypeId: string, slot: 'AM_10' | 'PM_3') => {
+  const handleOrderDaily = async (coffeeTypeId: string, slot: 'AM_10' | 'PM_3' | 'NOW') => {
     setLoading(true);
     try {
       const today = new Date();
@@ -165,6 +165,13 @@ const Dashboard: React.FC = () => {
               </button>
               <button 
                 className="btn btn-primary" 
+                onClick={() => handleOrderDaily(coffee.id, 'NOW')}
+                disabled={loading}
+              >
+                Order Now
+              </button>
+              <button 
+                className="btn btn-primary" 
                 onClick={() => handleOrderWeekly(coffee.id)}
                 disabled={loading}
               >
@@ -195,7 +202,7 @@ const Dashboard: React.FC = () => {
               {orders.map((o: any) => (
                 <tr key={o.id}>
                   <td>{new Date(o.date).toLocaleDateString()}</td>
-                  <td>{o.slot === 'AM_10' ? '10 AM' : '3 PM'}</td>
+                  <td>{o.slot === 'AM_10' ? '10 AM' : o.slot === 'PM_3' ? '3 PM' : 'Now'}</td>
                   <td>{o.coffee_type?.name}</td>
                   <td>
                     <span style={{ 

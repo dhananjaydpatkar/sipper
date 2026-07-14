@@ -65,19 +65,21 @@ router.post('/daily', authenticateToken, async (req: AuthRequest, res: Response)
       return;
     }
 
-    // Check for existing order
-    const existingOrder = await prisma.order.findFirst({
-      where: {
-        user_id: userId,
-        date: orderDate,
-        slot,
-        status: { not: 'CANCELLED' }
-      }
-    });
+    // Check for existing order for AM_10 or PM_3
+    if (slot !== 'NOW') {
+      const existingOrder = await prisma.order.findFirst({
+        where: {
+          user_id: userId,
+          date: orderDate,
+          slot,
+          status: { not: 'CANCELLED' }
+        }
+      });
 
-    if (existingOrder) {
-      res.status(409).json({ error: 'Order is already in place for this slot.' });
-      return;
+      if (existingOrder) {
+        res.status(409).json({ error: 'Order is already in place for this slot.' });
+        return;
+      }
     }
 
     // Transaction to ensure balance and order creation are atomic

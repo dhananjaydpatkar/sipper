@@ -10,6 +10,7 @@ interface DetailedOrder {
   user_name: string;
   user_phone: string;
   coffee_type: string;
+  slot: string;
   status: string;
   created_at: string;
 }
@@ -36,7 +37,6 @@ const AdminDashboard: React.FC = () => {
     const today = new Date();
     return today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
   });
-  const [slot, setSlot] = useState<'AM_10' | 'PM_3'>('AM_10');
   const [settleAmounts, setSettleAmounts] = useState<{ [key: string]: string }>({});
   const [activeTab, setActiveTab] = useState<'orders' | 'settlements'>('orders');
   const [orderSearchQuery, setOrderSearchQuery] = useState('');
@@ -55,7 +55,7 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     fetchOrders();
     fetchUsers();
-  }, [date, slot]);
+  }, [date]);
 
   useEffect(() => {
     fetchLogs();
@@ -63,7 +63,7 @@ const AdminDashboard: React.FC = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get(`${API_URL}/admin/orders/aggregate?date=${date}&slot=${slot}`);
+      const res = await axios.get(`${API_URL}/admin/orders/aggregate?date=${date}`);
       setOrdersData(res.data);
     } catch (err) {
       console.error(err);
@@ -176,17 +176,6 @@ const AdminDashboard: React.FC = () => {
               onChange={(e) => setDate(e.target.value)} 
             />
           </div>
-          <div className="input-group" style={{ maxWidth: '300px' }}>
-            <label>Slot</label>
-            <select 
-              className="input-control" 
-              value={slot} 
-              onChange={(e) => setSlot(e.target.value as any)}
-            >
-              <option value="AM_10">10 AM</option>
-              <option value="PM_3">3 PM</option>
-            </select>
-          </div>
           <div className="input-group" style={{ marginTop: '1rem', maxWidth: '300px' }}>
             <label>Filter by User</label>
             <input 
@@ -209,6 +198,7 @@ const AdminDashboard: React.FC = () => {
                   <th>Order Time</th>
                   <th>User</th>
                   <th>Phone</th>
+                  <th>Slot</th>
                   <th>Coffee Type</th>
                   <th>Status</th>
                   <th>Action</th>
@@ -220,6 +210,7 @@ const AdminDashboard: React.FC = () => {
                     <td>{new Date(o.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
                     <td>{o.user_name}</td>
                     <td>{o.user_phone}</td>
+                    <td>{o.slot === 'NOW' ? 'adhoc' : o.slot === 'AM_10' ? '10 AM' : '3 PM'}</td>
                     <td>{o.coffee_type}</td>
                     <td>
                       <span style={{ 
@@ -256,7 +247,7 @@ const AdminDashboard: React.FC = () => {
                 ))}
                 {ordersData.orders.length === 0 && (
                   <tr>
-                    <td colSpan={6} style={{ textAlign: 'center' }}>No orders for this slot.</td>
+                    <td colSpan={7} style={{ textAlign: 'center' }}>No orders for this date.</td>
                   </tr>
                 )}
               </tbody>

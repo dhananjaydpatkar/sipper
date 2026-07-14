@@ -12,8 +12,8 @@ router.use(requireAdmin);
 router.get('/orders/aggregate', async (req: AuthRequest, res: Response): Promise<void> => {
   const { date, slot } = req.query;
 
-  if (!date || !slot) {
-    res.status(400).json({ error: 'date and slot are required' });
+  if (!date) {
+    res.status(400).json({ error: 'date is required' });
     return;
   }
 
@@ -21,12 +21,16 @@ router.get('/orders/aggregate', async (req: AuthRequest, res: Response): Promise
   const parsedDate = new Date(date as string);
 
   try {
+    const whereClause: any = {
+      date: parsedDate,
+      status: { not: 'CANCELLED' }
+    };
+    if (slot) {
+      whereClause.slot = slot;
+    }
+
     const orders = await prisma.order.findMany({
-      where: {
-        date: parsedDate,
-        slot: slot as any,
-        status: { not: 'CANCELLED' }
-      },
+      where: whereClause,
       include: {
         user: {
           select: {
@@ -51,6 +55,7 @@ router.get('/orders/aggregate', async (req: AuthRequest, res: Response): Promise
       user_name: o.user.name,
       user_phone: o.user.phone_number,
       coffee_type: o.coffee_type.name,
+      slot: o.slot,
       status: o.status,
       created_at: o.createdAt
     }));
